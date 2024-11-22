@@ -1,84 +1,94 @@
-# SSH IP Management and DHCP Lease Cleanup
 
-Este script permite gestionar direcciones IP de múltiples servidores mediante SSH, generar rangos IP filtrados basados en exclusiones y ejecutar comandos de limpieza de arrendamientos DHCP. Utiliza la biblioteca `paramiko` para realizar conexiones SSH.
+# SSH IP Filtering and DHCP Cleanup Script
 
-## Características
+This Python script performs the following tasks:
+1. Connects to multiple servers via SSH to retrieve a list of IP addresses using the command `diagnose firewall auth list`.
+2. Filters a specified IP range, excluding the IPs retrieved from the servers.
+3. Executes DHCP lease cleanup commands on the servers based on the filtered IP ranges.
 
-1. **Extracción de Direcciones IP**:
-   - Se conecta a una lista de servidores definidos.
-   - Ejecuta un comando SSH para extraer direcciones IP basadas en un patrón.
-   - Guarda las direcciones IP en un archivo.
+## Prerequisites
 
-2. **Generación de Rangos IP Filtrados**:
-   - Genera un rango de direcciones IP basado en un rango inicial y final.
-   - Excluye direcciones IP previamente detectadas.
-   - Escribe los rangos resultantes en un archivo.
+- Python 3.x installed on your system.
+- The `paramiko` library for SSH communication.
+- Threading support for parallel execution.
 
-3. **Limpieza de Arrendamientos DHCP**:
-   - Ejecuta un comando SSH para limpiar arrendamientos DHCP basados en los rangos generados.
+Install the required library with:
+```bash
+pip install paramiko
+```
 
-## Requisitos
+## Usage
 
-- Python 3.6 o superior
-- Biblioteca `paramiko` para conexiones SSH:
-  ```bash
-  pip install paramiko
-  ```
-
-## Uso
-
-### Configuración
-
-1. **Definir servidores**:
-   - Actualiza la variable `servers` con las credenciales y direcciones IP de los servidores:
-     ```python
-     servers = [
-         {"hostname": "10.0.0.1", "username": "admin", "password": "password"},
-         # Agrega más servidores según sea necesario
-     ]
-     ```
-
-2. **Especificar rangos y archivos de salida**:
-   - Modifica las variables según tus necesidades:
-     - `start_ip` y `end_ip`: Rango IP a procesar.
-     - `output_file_clients`: Archivo donde se guardarán las IP extraídas.
-     - `output_file_dhcp`: Archivo con los rangos filtrados.
-
-### Ejecución
-
-1. Ejecuta el script:
-   ```bash
-   python script.py
+1. **Update Server Details**:
+   Modify the `servers` list in the script with the appropriate hostname, username, and password:
+   ```python
+   servers = [
+       {"hostname": "10.0.0.1", "username": "admin", "password": "password"},
+       # Add more servers as needed
+   ]
    ```
 
-2. **Salida**:
-   - Las direcciones IP extraídas se guardan en `C:\Jobs\Data\clients_clean.txt`.
-   - Los rangos IP filtrados se escriben en `C:\Jobs\Data\dhcp_clear.txt`.
+2. **Specify IP Range**:
+   Update the `start_ip` and `end_ip` variables to define the range you want to filter:
+   ```python
+   start_ip = "192.168.160.10"
+   end_ip = "192.168.167.254"
+   ```
 
-3. **Limpieza DHCP**:
-   - El script limpia los arrendamientos DHCP ejecutando comandos en los servidores.
+3. **Run the Script**:
+   Execute the script:
+   ```bash
+   python script_name.py
+   ```
 
-### Estructura del Script
+4. **Output**:
+   - Prints the extracted IP addresses from the servers.
+   - Displays the filtered IP ranges.
+   - Executes the DHCP lease cleanup commands for the filtered IP ranges.
 
-- **Parte 1**: Extracción de direcciones IP desde servidores mediante SSH.
-- **Parte 2**: Generación de rangos filtrados excluyendo direcciones IP detectadas.
-- **Parte 3**: Limpieza de arrendamientos DHCP en los servidores.
+## Features
 
-## Personalización
+- Connects to multiple servers via SSH in parallel using threading.
+- Filters IP ranges dynamically without using temporary files.
+- Sends DHCP cleanup commands to the servers.
 
-- Ajusta el comando SSH en `command` para extraer direcciones IP según tu configuración.
-- Modifica el rango IP y las exclusiones según sea necesario.
+## Script Flow
 
-## Consideraciones de Seguridad
+1. **Extract IP Addresses**:
+   - Connects to each server and retrieves IP addresses based on the command output.
+   - Uses regex to extract valid IPs.
 
-- Evita almacenar contraseñas en texto plano. Considera usar variables de entorno o herramientas como `keyring`.
-- Asegúrate de que los archivos de salida estén protegidos en el sistema.
+2. **Generate Filtered Ranges**:
+   - Excludes the retrieved IPs from a specified range.
+   - Supports IP range splitting and output in contiguous blocks.
 
-## Contribuciones
+3. **Execute Commands**:
+   - Sends DHCP cleanup commands for each filtered IP or IP range.
 
-Si deseas mejorar este proyecto, eres bienvenido a enviar tus sugerencias o realizar un fork.
+## Example Output
 
-## Licencia
+```
+Direcciones IP extraídas: ['192.168.160.12', '192.168.160.15']
+Rangos filtrados generados:
+192.168.160.10-192.168.160.11
+192.168.160.13-192.168.160.14
+192.168.160.16-192.168.167.254
+```
 
-Este proyecto se distribuye bajo la licencia MIT. Consulta el archivo `LICENSE` para más detalles.
-**
+## Customization
+
+- Modify the `base_command` variable to change the DHCP cleanup command:
+  ```python
+  base_command = "execute dhcp lease-clear"
+  ```
+
+- Add more servers to the `servers` list as needed.
+
+## Notes
+
+- Ensure the user account used has sufficient permissions to execute the SSH commands on the servers.
+- The script does not save any data to files; all processing is done in-memory.
+
+## License
+
+This script is provided under the MIT License. Feel free to use and modify it as needed.

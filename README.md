@@ -92,3 +92,15 @@ Rangos filtrados generados:
 ## Licencia
 
 Este script se proporciona bajo la Licencia MIT. Puedes usarlo y modificarlo según tus necesidades.
+
+
+Guarda el script como setup_clean_dhcp.sh.
+
+Dale permisos de ejecución:
+bash
+Copiar código
+chmod +x setup_clean_dhcp.sh
+Ejecútalo:
+bash
+Copiar código
+sudo ./setup_clean_dhcp.sh

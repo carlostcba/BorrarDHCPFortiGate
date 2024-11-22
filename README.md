@@ -1,71 +1,71 @@
 
-# SSH IP Filtering and DHCP Cleanup Script
+# Script para Filtrado de IPs y Limpieza de Arrendamientos DHCP
 
-This Python script performs the following tasks:
-1. Connects to multiple servers via SSH to retrieve a list of IP addresses using the command `diagnose firewall auth list`.
-2. Filters a specified IP range, excluding the IPs retrieved from the servers.
-3. Executes DHCP lease cleanup commands on the servers based on the filtered IP ranges.
+Este script en Python realiza las siguientes tareas:
+1. Se conecta a varios servidores mediante SSH para obtener una lista de direcciones IP utilizando el comando `diagnose firewall auth list`.
+2. Filtra un rango de IPs especificado, excluyendo las direcciones IP obtenidas de los servidores.
+3. Ejecuta comandos de limpieza de arrendamientos DHCP en los servidores según los rangos filtrados.
 
-## Prerequisites
+## Requisitos Previos
 
-- Python 3.x installed on your system.
-- The `paramiko` library for SSH communication.
-- Threading support for parallel execution.
+- Python 3.x instalado en el sistema.
+- La biblioteca `paramiko` para comunicación SSH.
+- Soporte para ejecución en paralelo mediante hilos (threading).
 
-Install the required library with:
+Instala la biblioteca requerida con:
 ```bash
 pip install paramiko
 ```
 
-## Usage
+## Uso
 
-1. **Update Server Details**:
-   Modify the `servers` list in the script with the appropriate hostname, username, and password:
+1. **Actualizar Detalles de los Servidores**:
+   Modifica la lista `servers` en el script con los datos apropiados de hostname, usuario y contraseña:
    ```python
    servers = [
-       {"hostname": "10.0.0.1", "username": "admin", "password": "password"},
-       # Add more servers as needed
+       {"hostname": "10.0.0.1", "username": "usuario", "password": "contraseña"},
+       # Agrega más servidores según sea necesario
    ]
    ```
 
-2. **Specify IP Range**:
-   Update the `start_ip` and `end_ip` variables to define the range you want to filter:
+2. **Especificar el Rango de IP**:
+   Actualiza las variables `start_ip` y `end_ip` para definir el rango de IPs que deseas filtrar:
    ```python
    start_ip = "192.168.160.10"
    end_ip = "192.168.167.254"
    ```
 
-3. **Run the Script**:
-   Execute the script:
+3. **Ejecutar el Script**:
+   Ejecuta el script:
    ```bash
-   python script_name.py
+   python clean_dhcp.py
    ```
 
-4. **Output**:
-   - Prints the extracted IP addresses from the servers.
-   - Displays the filtered IP ranges.
-   - Executes the DHCP lease cleanup commands for the filtered IP ranges.
+4. **Resultados**:
+   - Muestra las direcciones IP extraídas de los servidores.
+   - Genera y muestra los rangos de IP filtrados.
+   - Ejecuta los comandos de limpieza de arrendamientos DHCP para los rangos de IP filtrados.
 
-## Features
+## Características
 
-- Connects to multiple servers via SSH in parallel using threading.
-- Filters IP ranges dynamically without using temporary files.
-- Sends DHCP cleanup commands to the servers.
+- Conexión a múltiples servidores mediante SSH de forma paralela usando hilos (threading).
+- Filtra rangos de IP de forma dinámica sin usar archivos temporales.
+- Envía comandos de limpieza de DHCP a los servidores.
 
-## Script Flow
+## Flujo del Script
 
-1. **Extract IP Addresses**:
-   - Connects to each server and retrieves IP addresses based on the command output.
-   - Uses regex to extract valid IPs.
+1. **Extracción de Direcciones IP**:
+   - Se conecta a cada servidor y obtiene direcciones IP basadas en la salida del comando.
+   - Usa expresiones regulares para extraer direcciones IP válidas.
 
-2. **Generate Filtered Ranges**:
-   - Excludes the retrieved IPs from a specified range.
-   - Supports IP range splitting and output in contiguous blocks.
+2. **Generación de Rangos Filtrados**:
+   - Excluye las direcciones IP obtenidas de un rango especificado.
+   - Genera bloques contiguos de direcciones IP filtradas.
 
-3. **Execute Commands**:
-   - Sends DHCP cleanup commands for each filtered IP or IP range.
+3. **Ejecución de Comandos**:
+   - Envía comandos de limpieza de arrendamientos DHCP para cada IP o rango de IP.
 
-## Example Output
+## Ejemplo de Salida
 
 ```
 Direcciones IP extraídas: ['192.168.160.12', '192.168.160.15']
@@ -75,20 +75,20 @@ Rangos filtrados generados:
 192.168.160.16-192.168.167.254
 ```
 
-## Customization
+## Personalización
 
-- Modify the `base_command` variable to change the DHCP cleanup command:
+- Modifica la variable `base_command` para cambiar el comando de limpieza de DHCP:
   ```python
   base_command = "execute dhcp lease-clear"
   ```
 
-- Add more servers to the `servers` list as needed.
+- Agrega más servidores a la lista `servers` según sea necesario.
 
-## Notes
+## Notas
 
-- Ensure the user account used has sufficient permissions to execute the SSH commands on the servers.
-- The script does not save any data to files; all processing is done in-memory.
+- Asegúrate de que la cuenta de usuario utilizada tenga permisos suficientes para ejecutar los comandos SSH en los servidores.
+- El script no guarda ningún dato en archivos; todo el procesamiento se realiza en memoria.
 
-## License
+## Licencia
 
-This script is provided under the MIT License. Feel free to use and modify it as needed.
+Este script se proporciona bajo la Licencia MIT. Puedes usarlo y modificarlo según tus necesidades.

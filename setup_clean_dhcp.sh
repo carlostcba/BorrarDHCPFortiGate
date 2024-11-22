@@ -9,6 +9,10 @@ LOG_FILE="/var/log/clean_dhcp.log"
 echo "Actualizando el sistema e instalando dependencias..."
 sudo apt update && sudo apt install -y python3 python3-pip curl cron
 
+# Instalar la biblioteca paramiko
+echo "Instalando las bibliotecas necesarias para el script..."
+sudo pip3 install paramiko
+
 # Descargar el script Python
 echo "Descargando el script clean_dhcp.py..."
 sudo curl -o "$SCRIPT_PATH" "$REPO_URL"

@@ -1,7 +1,6 @@
 import paramiko
 import threading
 import re
-import os
 
 # Parte 1: Extracción de direcciones IP
 servers = [
@@ -13,7 +12,7 @@ command = "diagnose firewall auth list"
 ip_pattern = r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b'
 ip_addresses = []
 
-def ssh_command(server, command):
+def ssh_command(server, command, result_list):
     try:
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
@@ -21,29 +20,20 @@ def ssh_command(server, command):
         stdin, stdout, stderr = ssh.exec_command(command)
         output = stdout.read().decode()
         ssh.close()
-        ip_addresses.extend(re.findall(ip_pattern, output))
+        result_list.extend(re.findall(ip_pattern, output))
     except Exception as e:
         print(f"Error en la conexión a {server['hostname']}: {str(e)}")
 
 threads = []
 for server in servers:
-    thread = threading.Thread(target=ssh_command, args=(server, command))
+    thread = threading.Thread(target=ssh_command, args=(server, command, ip_addresses))
     threads.append(thread)
     thread.start()
 
 for thread in threads:
     thread.join()
 
-output_file_clients = "C:\\Jobs\\Data\\clients_clean.txt"
-if not os.path.isfile(output_file_clients):
-    with open(output_file_clients, 'w') as file:
-        file.write("")
-
-with open(output_file_clients, "w") as file:
-    for ip_address in ip_addresses:
-        file.write(ip_address + "\n")
-
-print("Direcciones IP guardadas en", output_file_clients)
+print("Direcciones IP extraídas:", ip_addresses)
 
 # Parte 2: Generación de rangos filtrados
 def ip_to_int(ip):
@@ -73,32 +63,24 @@ def generate_filtered_ranges(start_ip, end_ip, excluded_ips):
     if current_range_start:
         yield (current_range_start, end_ip)
 
-output_file_dhcp = "C:\\Jobs\\Data\\dhcp_clear.txt"
 start_ip = "192.168.160.10"
 end_ip = "192.168.167.254"
 
-excluded_ips = []
-if os.path.isfile(output_file_clients):
-    with open(output_file_clients, "r") as file:
-        excluded_ips = [line.strip() for line in file]
-
-filtered_ranges = list(generate_filtered_ranges(start_ip, end_ip, excluded_ips))
-
-with open(output_file_dhcp, "w") as file:
-    for start, end in filtered_ranges:
-        if start == end:
-            file.write(f"{start}\n")
-        else:
-            file.write(f"{start}-{end}\n")
-
-print(f"Archivo {output_file_dhcp} generado con los rangos filtrados.")
+filtered_ranges = list(generate_filtered_ranges(start_ip, end_ip, ip_addresses))
+print("Rangos filtrados generados:")
+for start, end in filtered_ranges:
+    if start == end:
+        print(start)
+    else:
+        print(f"{start}-{end}")
 
 # Parte 3: Limpieza de arrendamientos DHCP
 base_command = "execute dhcp lease-clear"
-with open(output_file_dhcp, 'r') as file:
-    ip_addresses = file.read().splitlines()
 
 for server in servers:
-    for ip_address in ip_addresses:
-        full_command = f"{base_command} {ip_address}"
-        ssh_command(server, full_command)
+    for start, end in filtered_ranges:
+        if start == end:
+            full_command = f"{base_command} {start}"
+        else:
+            full_command = f"{base_command} {start}-{end}"
+        ssh_command(server, full_command, [])

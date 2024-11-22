@@ -1,4 +1,3 @@
-**
 # SSH IP Management and DHCP Lease Cleanup
 
 Este script permite gestionar direcciones IP de múltiples servidores mediante SSH, generar rangos IP filtrados basados en exclusiones y ejecutar comandos de limpieza de arrendamientos DHCP. Utiliza la biblioteca `paramiko` para realizar conexiones SSH.

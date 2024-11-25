@@ -8,6 +8,9 @@ Este script en Python realiza las siguientes tareas:
 
 ## Requisitos Previos
 
+- Sistema operativo: **Debian 11/12** o **Ubuntu 20.04/22.04**.
+- Acceso a `sudo` o permisos de administrador.
+- Conexión a internet.
 - Python 3.x instalado en el sistema.
 - La biblioteca `paramiko` para comunicación SSH.
 - Soporte para ejecución en paralelo mediante hilos (threading).
@@ -83,6 +86,40 @@ Rangos filtrados generados:
   ```
 
 - Agrega más servidores a la lista `servers` según sea necesario.
+
+## Instalación y Configuración Automática
+
+El script `setup_clean_dhcp.sh` automatiza la instalación y programación del script `clean_dhcp.py`. Sigue los pasos a continuación para configurarlo:
+
+### 1. Descargar el Script de Configuración
+
+En un terminal, descarga el archivo `setup_clean_dhcp.sh` ejecutando el siguiente comando:
+
+```bash
+curl -O https://raw.githubusercontent.com/carlostcba/BorrarDHCPFortiGate/main/setup_clean_dhcp.sh
+```
+
+### 2. Asignar Permisos de Ejecución
+
+Después de descargar el archivo, asigna permisos de ejecución con:
+
+```bash
+chmod +x setup_clean_dhcp.sh
+```
+
+### 3. Ejecutar el Script
+
+Ejecuta el script para instalar las dependencias, configurar el script Python y programar la tarea en `cron`:
+
+```bash
+sudo ./setup_clean_dhcp.sh
+```
+
+### Verificar la Tarea Programada
+
+```bash
+crontab -l
+```
 
 ## Notas
 

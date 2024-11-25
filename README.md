@@ -89,7 +89,7 @@ Rangos filtrados generados:
 
 ## Instalación y Configuración Automática
 
-El script `setup_clean_dhcp.sh` automatiza la instalación y programación del script `clean_dhcp.py`. Sigue los pasos a continuación para configurarlo:
+El script `setup_clean_dhcp.sh` automatiza la instalación y programación del script `clean_dhcp.py` para que se ejecute a las 23:00hs. Sigue los pasos a continuación para configurarlo:
 
 ### 1. Descargar el Script de Configuración
 

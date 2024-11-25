@@ -115,11 +115,38 @@ Ejecuta el script para instalar las dependencias, configurar el script Python y 
 sudo ./setup_clean_dhcp.sh
 ```
 
+### 4. Confirmar la Configuración
+
+- El script descargará `clean_dhcp.py` y lo colocará en `/usr/local/bin/`.
+- Instalará las dependencias necesarias (`paramiko`).
+- Programará una tarea en `cron` para ejecutar el script automáticamente todos los días a las 23:00.
+- Los logs se almacenarán en `/var/log/clean_dhcp.log`.
+
 ### Verificar la Tarea Programada
+
+Para confirmar que la tarea en `cron` se programó correctamente, usa:
 
 ```bash
 crontab -l
 ```
+
+Deberías ver una línea similar a:
+
+```bash
+0 23 * * * python3 /usr/local/bin/clean_dhcp.py >> /var/log/clean_dhcp.log 2>&1
+```
+
+## Manual de Uso
+
+- Si necesitas ejecutar el script manualmente:
+  ```bash
+  python3 /usr/local/bin/clean_dhcp.py
+  ```
+
+- Para ver los logs:
+  ```bash
+  cat /var/log/clean_dhcp.log
+  ```
 
 ## Notas
 
